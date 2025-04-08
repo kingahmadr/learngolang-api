@@ -1,9 +1,10 @@
 package models
 
-// User represents a user in the system
+import "gorm.io/gorm"
+
 type User struct {
-	ID       int    `json:"id"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	gorm.Model
+	Name     string `json:"name"`
+	Email    string `gorm:"unique" json:"email"`
+	Password string `json:"password"` // store hashed in real apps
 }

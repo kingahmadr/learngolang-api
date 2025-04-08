@@ -1,18 +1,18 @@
 # Step 1: Use the official Golang image as the base image
-FROM golang:1.20-alpine as builder
+FROM golang:1.24-alpine as builder
 
 # Step 2: Set the Current Working Directory inside the container
 WORKDIR /app
 
 # Step 3: Copy go.mod and go.sum and download dependencies
-COPY go.mod go.sum ./
+COPY go.mod ./
 RUN go mod tidy
 
 # Step 4: Copy the source code into the container
 COPY . .
 
 # Step 5: Build the Go application
-RUN go build -o main .
+RUN go build -o main ./cmd/apps
 
 # Step 6: Use a smaller image to reduce the size of the final image
 FROM alpine:latest  

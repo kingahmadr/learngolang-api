@@ -1,0 +1,24 @@
+# version: '3.7'
+
+services:
+  postfix:
+    image: catatnight/postfix:latest
+    container_name: postfix
+    environment:
+      - maildomain=example.com  # Your domain name
+      - smtp_user=user:password  # Your SMTP user and password
+    ports:
+      - "25:25"   # SMTP port
+    volumes:
+      - ./postfix:/etc/postfix   # Custom Postfix configuration (optional)
+      - ./logs:/var/log/postfix  # Log volume for persistent logs
+      - ./hosts:/etc/hosts       # Hosts file
+    restart: always
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "8025:8025"  # Web UI port for Mailhog
+      - "1025:1025"  # SMTP port for Mailhog (to test sending)
+    restart: always

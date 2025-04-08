@@ -16,6 +16,9 @@ func SendEmailHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Log the email sending attempt
+    utils.LogInfo("Sending email to: " + recipient)
+
 	// Send email
 	err := SendEmail(recipient, "Test Subject", "This is a test email body.")
 	if err != nil {
@@ -28,19 +31,12 @@ func SendEmailHandler(w http.ResponseWriter, r *http.Request) {
 
 // SendEmail sends an email using SMTP
 func SendEmail(to, subject, body string) error {
-	// SMTP Server settings
-	smtpHost := "smtp.example.com"
-	smtpPort := "587"
-	username := "your-email@example.com"
-	password := "your-email-password"
-	from := "your-email@example.com"
+    smtpHost := "192.168.100.19"
+    smtpPort := "25"
+    from := "no-reply@ahmadcloud.my.id"
+    message := []byte(fmt.Sprintf("Subject: %s\n\n%s", subject, body))
 
-	// Message
-	message := []byte(fmt.Sprintf("Subject: %s\n\n%s", subject, body))
-
-	// Authentication
-	auth := smtp.PlainAuth("", username, password, smtpHost)
-
-	// Send email
-	return smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{to}, message)
+    // No auth
+    return smtp.SendMail(smtpHost+":"+smtpPort, nil, from, []string{to}, message)
 }
+

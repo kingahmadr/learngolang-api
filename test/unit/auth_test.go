@@ -1,8 +1,8 @@
 package test
 
 import (
+	"learngolang-api/internal/auth"
 	"testing"
-	"your-project/internal/auth"
 )
 
 func TestAuthenticate(t *testing.T) {
