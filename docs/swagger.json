@@ -1,0 +1,204 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "description": "This is a sample API server for demonstrating Swagger in Go",
+      "title": "My API",
+      "version": "1.0"
+    },
+    "host": "127.0.0.1:8080",
+    "basePath": "/api/v1",
+    "schemes": ["http"],
+    "tags": [
+        {
+            "name": "User",
+            "description": "Operations related to user management"
+        }
+        ],
+    "paths": {
+      "/users": {
+        "get": {
+          "tags": ["User"],
+          "summary": "List all users",
+          "description": "Retrieve a list of users",
+          "produces": ["application/json"],
+          "responses": {
+            "200": {
+              "description": "A list of users",
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/UserResponse" }
+              }
+            },
+            "500": {
+              "description": "Failed to retrieve users"
+            }
+          }
+        },
+        "post": {
+          "tags": ["User"],
+          "summary": "Create a new user",
+          "description": "Create a new user with name, email, and password",
+          "consumes": ["application/json"],
+          "produces": ["application/json"],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/UserRequest"
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "User created successfully",
+              "schema": {
+                "$ref": "#/definitions/UserResponse"
+              }
+            },
+            "400": {
+              "description": "Invalid request body or missing password"
+            },
+            "409": {
+              "description": "User with this email already exists"
+            },
+            "500": {
+              "description": "Failed to create user"
+            }
+          }
+        }
+      },
+      "/users/{id}": {
+        "get": {
+          "tags": ["User"],
+          "summary": "Get user by ID",
+          "produces": ["application/json"],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "integer"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "User found",
+              "schema": {
+                "$ref": "#/definitions/UserResponse"
+              }
+            },
+            "400": {
+              "description": "Invalid user ID"
+            },
+            "404": {
+              "description": "User not found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["User"],
+          "summary": "Update user by ID",
+          "consumes": ["application/json"],
+          "produces": ["application/json"],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "integer"
+            },
+            {
+              "in": "body",
+              "name": "body",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/UserRequest"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "User updated successfully",
+              "schema": {
+                "$ref": "#/definitions/UserResponse"
+              }
+            },
+            "400": {
+              "description": "Invalid user ID"
+            },
+            "404": {
+              "description": "User not found"
+            },
+            "500": {
+              "description": "Failed to update user"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["User"],
+          "summary": "Delete user by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "integer"
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "User deleted successfully"
+            },
+            "400": {
+              "description": "Invalid user ID"
+            },
+            "500": {
+              "description": "Failed to delete user"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "UserRequest": {
+        "type": "object",
+        "required": ["name", "email", "password"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  }
+  

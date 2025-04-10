@@ -98,8 +98,19 @@ func ListUsersHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var response []schema.UserResponse
+	for _, user := range users {
+		response = append(response, schema.UserResponse{
+			ID:        user.ID,
+			Name:      user.Name,
+			Email:     user.Email,
+			CreatedAt: user.CreatedAt.Format("2006-01-02T15:04:05Z"),
+			UpdatedAt: user.UpdatedAt.Format("2006-01-02T15:04:05Z"),
+		})
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(users)
+	json.NewEncoder(w).Encode(response)
 }
 
 // GET /users/{id}
