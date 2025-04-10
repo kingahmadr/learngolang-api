@@ -14,3 +14,8 @@ type UserResponse struct {
 	UpdatedAt string  `json:"updatedAt"`
 	DeletedAt *string `json:"deletedAt,omitempty"`
 }
+
+type UserLoginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}

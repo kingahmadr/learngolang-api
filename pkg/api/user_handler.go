@@ -1,11 +1,11 @@
 package api
 
 import (
-	// "bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"learngolang-api/internal/database"
+	"learngolang-api/internal/utils"
 	"learngolang-api/pkg/models"
 	"learngolang-api/schema"
 	"net/http"
@@ -26,52 +26,37 @@ func hashPassword(password string) string {
 
 // POST /users
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
-	var requestBody schema.UserRequest
+	// var requestBody schema.UserRequest
 
-	// Decode the request body into a map to catch extra fields
-	var requestMap map[string]interface{}
-	if err := json.NewDecoder(r.Body).Decode(&requestMap); err != nil {
-		http.Error(w, "Invalid request body: "+err.Error(), http.StatusBadRequest)
-		return
-	}
+	var createUser schema.UserRequest
 
-	// Check for extra fields
-	for key := range requestMap {
-		if key != "name" && key != "email" && key != "password" {
-			http.Error(w, fmt.Sprintf("Invalid field: %s", key), http.StatusBadRequest)
-			return
-		}
-	}
-
-	// Re-read the request body and decode into the struct
-	// After checking for extra fields, now it's safe to read the body again
-	bodyBytes, _ := json.Marshal(requestMap)
-	if err := json.Unmarshal(bodyBytes, &requestBody); err != nil {
-		http.Error(w, "Invalid request body: "+err.Error(), http.StatusBadRequest)
+	err := utils.DecodeAndValidateJSON(r, []string{"name", "email", "password"}, &createUser)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	// Check if password is empty
-	if requestBody.Password == "" {
+	if createUser.Password == "" {
 		http.Error(w, "Password is required", http.StatusBadRequest)
 		return
 	}
 
 	// Check if user already exists in the database
 	var existingUser models.User
-	if err := database.DB.Where("email = ?", requestBody.Email).First(&existingUser).Error; err == nil {
+	if err := database.DB.Where("email = ?", createUser.Email).First(&existingUser).Error; err == nil {
 		// User already exists
 		http.Error(w, "User with this email already exists", http.StatusConflict)
 		return
 	}
 
 	// Hash the password (consider using bcrypt for security)
-	hashedPassword := hashPassword(requestBody.Password)
+	hashedPassword := hashPassword(createUser.Password)
 
 	// Create user object
 	user := models.User{
-		Name:     requestBody.Name,
-		Email:    requestBody.Email,
+		Name:     createUser.Name,
+		Email:    createUser.Email,
 		Password: hashedPassword,
 	}
 
