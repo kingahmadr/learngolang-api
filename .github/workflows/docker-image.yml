@@ -45,5 +45,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ vars.REGISTRY_URL }}/${{ vars.REGISTRY_NAMESPACE }}/learngolang-api:${{ env.VERSION }}
+            ${{ vars.REGISTRY_URL }}/${{ vars.REGISTRY_NAMESPACE }}/learngolang-api:${{ github.ref_name }}
             ${{ vars.REGISTRY_URL }}/${{ vars.REGISTRY_NAMESPACE }}/learngolang-api:latest
