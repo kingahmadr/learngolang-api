@@ -88,8 +88,13 @@ func main() {
 	// Serve Swagger UI (static files copied from swagger-ui /dist)
 	mux.Handle("/swagger/", http.StripPrefix("/swagger/", http.FileServer(http.Dir("./swagger-ui"))))
 
-	// Apply logging middleware
-	handler := middleware.Logger(mux)
+	// Wrap with CORS and Logger
+	allowedOrigins := []string{
+		"http://localhost:8080",
+		"http://192.168.100.19:8080",
+	}
+
+	handler := middleware.CORS(allowedOrigins)(middleware.Logger(mux))
 
 	// Start the HTTP server
 	fmt.Println("Server is running on http://localhost:8080...")

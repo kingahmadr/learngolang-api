@@ -1,0 +1,17 @@
+services:
+  app:
+    # image: registry.cloudraya.com/ir-cr-wowrack-781/learngolang-api:v1.2
+    image: learngolang-api:v4
+    container_name: learngolang-api
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env.development
+    environment:
+      - APP_ENV=development
+    volumes:
+      - ./.env.development:/root/.env.development:ro
+      - ./swagger-ui:/root/swagger-ui:ro
+      - ./docs:/root/docs:ro
+    # working_dir: /app
+    restart: unless-stopped

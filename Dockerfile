@@ -28,3 +28,6 @@ EXPOSE 8080
 
 # Step 10: Command to run the executable
 CMD ["./main"]
+
+#debug
+# CMD ["sleep", "3000d"]
