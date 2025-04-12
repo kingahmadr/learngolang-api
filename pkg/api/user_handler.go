@@ -148,17 +148,41 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 // DELETE /users/{id}
 func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
-	idStr := strings.TrimPrefix(r.URL.Path, "/users/")
+
+	// Split the URL and get the last part
+	parts := strings.Split(r.URL.Path, "/")
+	if len(parts) < 1 {
+		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+		return
+	}
+	idStr := parts[len(parts)-1]
+
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "Invalid user ID", http.StatusBadRequest)
 		return
 	}
 
-	if err := database.DB.Delete(&models.User{}, id).Error; err != nil {
+	var user models.User
+	// First, check if the user exists (excluding soft-deleted ones)
+	if err := database.DB.First(&user, id).Error; err != nil {
+		// Could be record not found, or already soft-deleted
+		http.Error(w, "User not found or already deleted", http.StatusNotFound)
+		return
+	}
+
+	// Check if already soft-deleted (safety net — optional)
+	if user.DeletedAt.Valid {
+		http.Error(w, "User already deleted", http.StatusConflict)
+		return
+	}
+
+	// Proceed to delete
+	if err := database.DB.Delete(&user).Error; err != nil {
 		http.Error(w, "Failed to delete user", http.StatusInternalServerError)
 		return
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "User deleted successfully"})
 }

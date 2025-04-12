@@ -18,6 +18,14 @@
           "description": "Authentication-related endpoints"
         }
         ],
+    "securityDefinitions": {
+      "BearerAuth": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header",
+        "description": "Enter only your JWT token. 'Bearer ' will be automatically added."
+      }
+    },
     "paths": {
       "/login": {
         "post": {
@@ -183,6 +191,11 @@
         "delete": {
           "tags": ["User"],
           "summary": "Delete user by ID",
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
           "parameters": [
             {
               "name": "id",

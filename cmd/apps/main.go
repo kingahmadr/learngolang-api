@@ -67,7 +67,9 @@ func main() {
 		case http.MethodPut:
 			api.UpdateUserHandler(w, r)
 		case http.MethodDelete:
-			api.DeleteUserHandler(w, r)
+			// Wrap GET handler with JWT middleware
+			middleware.RequireJWT(http.HandlerFunc(api.DeleteUserHandler)).ServeHTTP(w, r)
+			// api.DeleteUserHandler(w, r)
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
@@ -92,6 +94,7 @@ func main() {
 	allowedOrigins := []string{
 		"http://localhost:8080",
 		"http://192.168.100.19:8080",
+		"http://127.0.0.1:8080",
 	}
 
 	handler := middleware.CORS(allowedOrigins)(middleware.Logger(mux))
