@@ -96,6 +96,8 @@ func main() {
 		"http://192.168.100.19:8080",
 		"http://127.0.0.1:8080",
 		"https://apigo.ahmadcloud.my.id",
+		"http://apigo.ahmadcloud.my.id",
+		"http://10.10.64.182:8080",
 	}
 
 	handler := middleware.CORS(allowedOrigins)(middleware.Logger(mux))
